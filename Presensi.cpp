@@ -38,7 +38,9 @@ string getCurrentDateTime() {
 void tambahPresensi() {
     cin.ignore();
     if (index < MAX_SISWA) {
+        
         Presensi* newPresensi = new Presensi;
+
         cout << "NIM: "; getline(cin, newPresensi->nim);
         cout << "Nama: "; getline(cin, newPresensi->nama);
         cout << "Kelas: "; getline(cin, newPresensi->kelas);
@@ -59,13 +61,13 @@ void cetakPresensi() {
     cout << "   DAFTAR PRESENSI\n";
     cout << "=====================\n\n";
 
-    cout << "||     NIM      ||           NAMA           ||      Kelas     ||         Tanggal         ||\n\n";
+    cout << "||     NIM      ||           NAMA           ||      Kelas     ||         Tanggal & Waktu         ||\n\n";
 
     Presensi* current = head;
 
     while (current != nullptr) {
-        cout << "   " << current->nim << "        " << current->nama << "            " << current->kelas << "           " << current->tanggal;
-        cout << "\n------------------------------------------------------------------------------------------\n";
+        cout << "   " << current->nim << "        " << current->nama << "           " << current->kelas << "              " << current->tanggal;
+        cout << "\n---------------------------------------------------------------------------------------------------\n";
 
         current = current->next;
     }
@@ -76,15 +78,18 @@ void cariMahasiswa() {
     string cariNIM;
     cout << "Masukkan NIM yang ingin dicari: "; cin >> cariNIM;
 
-    for (int i = 0; i < index; ++i) {
-        if (siswa[i].nim == cariNIM) {
-            cout << "/nMahasiswa ditemukan:\n";
-            cout << "NIM: " << siswa[i].nim << "\n";
-            cout << "Nama: " << siswa[i].nama << "\n";
-            cout << "Kelas: " << siswa[i].kelas << "\n";
-            cout << "Tanggal Presensi: " << siswa[i].tanggal;
+    Presensi* current = head;
+
+    while (current != nullptr) {
+        if (current->nim == cariNIM) {
+            cout << "\nMahasiswa ditemukan :\n";
+            cout << "NIM: " << current->nim << "\n";
+            cout << "Nama: " << current->nama << "\n";
+            cout << "Kelas: " << current->kelas << "\n";
+            cout << "Tanggal Presensi: " << current->tanggal << "\n";
             return;
         }
+        current = current->next;
     }
 
     cout << "Mahasiswa dengan NIM " << cariNIM << " tidak ditemukan.\n";
@@ -232,10 +237,9 @@ int main() {
 
             case 8:
                 {
-                string nimToDelete;
-                cout << "Masukkan NIM yang ingin dihapus: ";
-                cin >> nimToDelete;
-                hapusMahasiswaByNIM(nimToDelete);
+                string hapusNIM;
+                cout << "Masukkan NIM yang ingin dihapus: "; cin >> hapusNIM;
+                hapusMahasiswaByNIM(hapusNIM);
                 }
                 break;
 
