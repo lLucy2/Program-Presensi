@@ -1,6 +1,6 @@
 #include <iostream>
-#include <algorithm>
 #include <string>
+#include <algorithm>
 #include <chrono>
 #include <ctime>
 
@@ -10,13 +10,10 @@ using namespace std;
 
 struct Presensi {
     string nim, nama, kelas, tanggal;
-    Presensi* next;
 };
 
-Presensi* head = nullptr;
-
-Presensi siswa[MAX_SISWA];
-int index = 0;
+Presensi* mahasiswa[MAX_SISWA];
+int head = 0;
 
 string getCurrentDateTime() {
     // Get the current time point
@@ -34,25 +31,42 @@ string getCurrentDateTime() {
 
     return buffer;
 }
-  
+
+bool isFull() {
+    if (head >= MAX_SISWA){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool isEmpty() {
+    if (head == 0){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void push_enqueue(Presensi& tambahPresensi) {
+    if (!isFull()) {
+        mahasiswa[head++] = new Presensi(tambahPresensi);
+        cout << "\nPresensi berhasil ditambahkan.\n";
+    } else {
+        cout << "\nKuota presensi sudah penuh.\n";
+    }
+}
+
 void tambahPresensi() {
     cin.ignore();
-    if (index < MAX_SISWA) {
-        
-        Presensi* newPresensi = new Presensi;
+    if (!isFull()) {
+        Presensi tambahPresensi;
+        cout << "\nNIM    : "; getline(cin, tambahPresensi.nim);
+        cout << "Nama   : "; getline(cin, tambahPresensi.nama);
+        cout << "Kelas  : "; getline(cin, tambahPresensi.kelas);
+        tambahPresensi.tanggal = getCurrentDateTime();
 
-        cout << "NIM: "; getline(cin, newPresensi->nim);
-        cout << "Nama: "; getline(cin, newPresensi->nama);
-        cout << "Kelas: "; getline(cin, newPresensi->kelas);
-        newPresensi->tanggal = getCurrentDateTime();
-        newPresensi->next = head;
-        head = newPresensi;
-
-        index++;
-
-        cout << "Presensi berhasil ditambahkan.\n";
-    } else {
-        cout << "Kuota presensi sudah penuh.\n";
+        push_enqueue(tambahPresensi);
     }
 }
 
@@ -60,151 +74,137 @@ void cetakPresensi() {
     cout << "\n=====================\n";
     cout << "   DAFTAR PRESENSI\n";
     cout << "=====================\n\n";
-
     cout << "||     NIM      ||           NAMA           ||      Kelas     ||         Tanggal & Waktu         ||\n\n";
-
-    Presensi* current = head;
-
-    while (current != nullptr) {
-        cout << "   " << current->nim << "        " << current->nama << "           " << current->kelas << "              " << current->tanggal;
+    for (int i = 0; i < head; i++) {
+        cout << "    " << mahasiswa[i]->nim << "        " << mahasiswa[i]->nama << "          " << mahasiswa[i]->kelas << "               " << mahasiswa[i]->tanggal;
         cout << "\n---------------------------------------------------------------------------------------------------\n";
-
-        current = current->next;
     }
 }
-
 
 void cariMahasiswa() {
     string cariNIM;
-    cout << "Masukkan NIM yang ingin dicari: "; cin >> cariNIM;
+    bool ketemu = false;
+    
+    cout << "\nMasukkan NIM yang ingin dicari: "; cin >> cariNIM;
 
-    Presensi* current = head;
-
-    while (current != nullptr) {
-        if (current->nim == cariNIM) {
+    for (int i = 0; i < head; i++) {
+        if (cariNIM == mahasiswa[i]->nim) {
             cout << "\nMahasiswa ditemukan :\n";
-            cout << "NIM: " << current->nim << "\n";
-            cout << "Nama: " << current->nama << "\n";
-            cout << "Kelas: " << current->kelas << "\n";
-            cout << "Tanggal Presensi: " << current->tanggal << "\n";
-            return;
+            cout << "\nNIM    : " << mahasiswa[i]->nim;
+            cout << "\nNama   : " << mahasiswa[i]->nama;
+            cout << "\nKelas  : " << mahasiswa[i]->kelas;
+            cout << "\nTanggal & Waktu Presensi : " << mahasiswa[i]->tanggal << "\n";
+            ketemu = true;
+            break;
         }
-        current = current->next;
     }
-
-    cout << "Mahasiswa dengan NIM " << cariNIM << " tidak ditemukan.\n";
+    if (!ketemu) {
+        cout << "\nMahasiswa dengan NIM " << cariNIM << " tidak ditemukan.\n";
+    }
 }
 
 void sortingPresensiNIM() {
-
-    for (int i = 0; i < index - 1; ++i) {
-        for (int j = 0; j < index - i - 1; ++j) {
-            if (siswa[j].nim > siswa[j + 1].nim) {
-                swap(siswa[j], siswa[j + 1]);
+    for (int i = 0; i < head - 1; i++) {
+        for (int j = 0; j < head - i - 1; j++) {
+            if (mahasiswa[j]->nim > mahasiswa[j + 1]->nim) {
+                swap(mahasiswa[j], mahasiswa[j + 1]);
             }
         }
     }
 
-    cout << "Presensi berhasil diurutkan berdasarkan NIM.\n";
-
+    cout << "\nPresensi berhasil diurutkan berdasarkan NIM.\n";
     cetakPresensi();
 }
 
-void sortingPresensiWaktu(){
-
-        for (int i = 0; i < index - 1; ++i) {
-        for (int j = 0; j < index - i - 1; j++) {
-            if (siswa[j].tanggal > siswa[j + 1].tanggal) {
-                swap(siswa[j], siswa[j + 1]);
+void sortingPresensiWaktu() {
+    for (int i = 0; i < head - 1; i++) {
+        for (int j = 0; j < head - i - 1; j++) {
+            if (mahasiswa[j]->tanggal > mahasiswa[j + 1]->tanggal) {
+                swap(mahasiswa[j], mahasiswa[j + 1]);
             }
         }
     }
 
-    cout << "Presensi berhasil diurutkan berdasarkan Tanggal dan Waktu.\n";
-
+    cout << "\nPresensi berhasil diurutkan berdasarkan Tanggal dan Waktu.\n";
     cetakPresensi();
-
 }
 
-void hapusMahasiswaPertama() {
-    if (head != nullptr) {
-        Presensi* temp = head;
-        head = head->next;
-        delete temp;
-        index--;
-
-        cout << "Mahasiswa pertama berhasil dihapus.\n";
+void hapusMahasiswaPertama() { // Dequeue
+    if (!isEmpty()) {
+        for (int i = 0; i < head - 1; ++i) {
+            mahasiswa[i] = mahasiswa[i + 1];
+        }
+        head--;
+        
+        cout << "\nMahasiswa pertama berhasil dihapus.\n";
     } else {
-        cout << "Tidak ada mahasiswa yang dapat dihapus.\n";
+        cout << "\nTidak ada mahasiswa yang dapat dihapus.\n";
     }
 }
 
-void hapusMahasiswaTerakhir() {
-    if (head != nullptr) {
-        if (head->next == nullptr) {
-            delete head;
-            head = nullptr;
-        } else {
-            Presensi* current = head;
-            while (current->next->next != nullptr) {
-                current = current->next;
+void hapusMahasiswaTerakhir() { // POP
+    if (!isEmpty()) {
+        head--;
+
+        cout << "\nMahasiswa terakhir berhasil dihapus.\n";
+    } else {
+        cout << "\nTidak ada mahasiswa yang dapat dihapus.\n";
+    }
+}
+
+void hapusMahasiswaNIM() {
+    string hapusNIM;
+    if (!isEmpty()) {
+        cout << "\nMasukkan NIM mahasiswa yang ingin dihapus: "; cin >> hapusNIM;
+
+        bool ketemu = false;
+        for (int i = 0; i < head; i++) {
+            if (hapusNIM == mahasiswa[i]->nim) {
+
+                delete mahasiswa[i];
+                
+                for (int j = i; j < head - 1; j++) {
+                    mahasiswa[j] = mahasiswa[j + 1];
+                }
+                head--;
+
+                cout << "\nMahasiswa dengan NIM " << hapusNIM << " berhasil dihapus.\n";
+                ketemu = true;
+                break;
             }
-            delete current->next;
-            current->next = nullptr;
         }
-        index--;
 
-        cout << "Mahasiswa terakhir berhasil dihapus.\n";
+        if (!ketemu) {
+            cout << "\nMahasiswa dengan NIM " << hapusNIM << " tidak ditemukan.\n";
+        }
     } else {
-        cout << "Tidak ada mahasiswa yang dapat dihapus.\n";
+        cout << "\nTidak ada mahasiswa yang dapat dihapus.\n";
     }
 }
 
-void hapusMahasiswaByNIM(string nim) {
-    Presensi* current = head;
-    Presensi* prev = nullptr;
 
-    while (current != nullptr && current->nim != nim) {
-        prev = current;
-        current = current->next;
-    }
-
-    if (current != nullptr) {
-        if (prev == nullptr) {
-            head = current->next;
-        } else {
-            prev->next = current->next;
-        }
-
-        delete current;
-        index--;
-        cout << "Mahasiswa dengan NIM " << nim << " berhasil dihapus.\n";
-    } else {
-        cout << "Mahasiswa dengan NIM " << nim << " tidak ditemukan.\n";
-    }
-}
 
 int main() {
+
     while (true) {
         system("cls");
 
-        cout << "=====================\n";
-        cout << "   PRESENSI MAHASISWA\n";
-        cout << "=====================\n\n";
+        cout << "======================\n";
+        cout << "  PRESENSI MAHASISWA\n";
+        cout << "======================\n\n";
 
         cout << "1. Input Presensi\n";
         cout << "2. Daftar Presensi\n";
         cout << "3. Cari Mahasiswa\n";
-        cout << "4. Sorting Ascending\n";
-        cout << "5. Sorting Tanggal & Waktu Ascending\n";
-        cout << "6. Hapus Mahasiswa Pertama\n";
-        cout << "7. Hapus Mahasiswa Terakhir\n";
+        cout << "4. Sorting NIM\n";
+        cout << "5. Sorting Tanggal & Waktu\n";
+        cout << "6. Hapus Mahasiswa Pertama (DeQueue)\n";
+        cout << "7. Hapus Mahasiswa Terakhir (POP)\n";
         cout << "8. Hapus Mahasiswa Dengan NIM\n";
         cout << "9. Keluar\n";
 
         cout << "\nSilahkan Pilih Menu : ";
-        int menu;
-        cin >> menu;
+        int menu; cin >> menu;
 
         switch (menu) {
             case 1:
@@ -236,11 +236,7 @@ int main() {
                 break;
 
             case 8:
-                {
-                string hapusNIM;
-                cout << "Masukkan NIM yang ingin dihapus: "; cin >> hapusNIM;
-                hapusMahasiswaByNIM(hapusNIM);
-                }
+                hapusMahasiswaNIM();
                 break;
 
             case 9:
@@ -248,7 +244,7 @@ int main() {
                 return 0;
 
             default:
-                cout << "\nPilihan Tidak Valid, Silahkan Pilih Menu 1 - 7!\n";
+                cout << "\nPilihan Tidak Valid, Silahkan Pilih Menu 1 - 9!\n";
                 break;
         }
 
