@@ -1,3 +1,6 @@
+// Untuk menggunakan headers <chrono> dan <ctime>
+// Wajib menggunakan compiler yang support C++11
+
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -183,8 +186,6 @@ void hapusMahasiswaNIM() {
         cout << "\nTidak ada mahasiswa yang dapat dihapus.\n";
     }
 }
-
-
 
 int main() {
 
