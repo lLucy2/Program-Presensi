@@ -15,7 +15,8 @@ struct Presensi {
 Presensi* mahasiswa[MAX_SISWA];
 int head = 0;
 
-string getCurrentDateTime() {
+// Mengambil Function getCurrentDateTime dari StackOverflow
+string getCurrentDateTime() { //
     // Get the current time point
     auto currentTime = chrono::system_clock::now();
 
@@ -62,8 +63,8 @@ void tambahPresensi() {
     if (!isFull()) {
         Presensi tambahPresensi;
         cout << "\nNIM    : "; getline(cin, tambahPresensi.nim);
-        cout << "Nama   : "; getline(cin, tambahPresensi.nama);
-        cout << "Kelas  : "; getline(cin, tambahPresensi.kelas);
+        cout << "NAMA   : "; getline(cin, tambahPresensi.nama);
+        cout << "KELAS  : "; getline(cin, tambahPresensi.kelas);
         tambahPresensi.tanggal = getCurrentDateTime();
 
         push_enqueue(tambahPresensi);
@@ -131,7 +132,7 @@ void sortingPresensiWaktu() {
 
 void hapusMahasiswaPertama() { // Dequeue
     if (!isEmpty()) {
-        for (int i = 0; i < head - 1; ++i) {
+        for (int i = 0; i < head - 1; i++) {
             mahasiswa[i] = mahasiswa[i + 1];
         }
         head--;
@@ -151,6 +152,7 @@ void hapusMahasiswaTerakhir() { // POP
         cout << "\nTidak ada mahasiswa yang dapat dihapus.\n";
     }
 }
+
 
 void hapusMahasiswaNIM() {
     string hapusNIM;
